@@ -201,18 +201,22 @@ if fetch_clicked:
 
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
-
-                ydl_opts = {
-                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-                    "merge_output_format": "mp4",
-                    "outtmpl": temp_file,
-                    "quiet": True,
-                    "no_warnings": True,
-                    "cookiefile": "cookies.txt",  # ADD THIS LINE
-                    user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "referer": "https://www.google.com/",
-                }
-
+ydl_opts = {
+    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+    "merge_output_format": "mp4",
+    "outtmpl": temp_file,
+    "quiet": True,
+    "no_warnings": True,
+    "cookiefile": "cookies.txt",
+    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    "referer": "https://www.youtube.com/",
+    "extractor_args": {
+        "youtube": {
+            "player_client": ["mweb"],
+            "po_token": ["web+MnS8O..."], # This triggers the bgutil provider
+        }
+    }
+}
                 status.write("Fetching highest quality stream")
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url])
