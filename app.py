@@ -140,17 +140,15 @@ if fetch_clicked:
                     os.remove(temp_file)
 
                 status.write("Configuring AI Fetcher...")
-                # The "b" format ensures we grab a single playable file without needing to merge
-               ydl_opts = {
+                ydl_opts = {
                     "format": "best",
                     "outtmpl": temp_file,
-                    "quiet": False, # Setting to False helps you see more error detail
+                    "quiet": False,
                     "no_warnings": False,
                     "cookiefile": "cookies.txt",
                     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
                     "nocheckcertificate": True,
                     "ignoreerrors": True,
-                }
                     "http_headers": {
                         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                         "Accept-Language": "en-US,en;q=0.5",
