@@ -136,7 +136,6 @@ if fetch_clicked:
 
         with st.status("Unlocking media...", expanded=True) as status:
             try:
-                # Cleanup old files
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
 
@@ -153,6 +152,7 @@ if fetch_clicked:
                     "extractor_args": {
                         "youtube": {
                             "player_client": ["mweb"],
+                            "po_token": ["web+MnS8O..."],
                         }
                     }
                 }
@@ -173,48 +173,6 @@ if fetch_clicked:
             except Exception as e:
                 status.update(label="Unlock Failed", state="error")
                 st.error(f"Reason: {str(e)}")
-    else:
-        temp_file = "downloaded_content.mp4"
-        st.session_state.video_ready = False
-        st.session_state.video_bytes = b""
-
-        with st.status("Unlocking media...", expanded=True) as status:
-            try:
-                if os.path.exists(temp_file):
-                    os.remove(temp_file)
-
-                ydl_opts = {
-                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-                    "merge_output_format": "mp4",
-                    "outtmpl": temp_file,
-                    "quiet": True,
-                    "no_warnings": True,
-                    "cookiefile": "cookies.txt",
-                    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
-                    "referer": "https://www.youtube.com/",
-                    "extractor_args": {
-                        "youtube": {
-                            "player_client": ["mweb"],
-                            "po_token": ["web+MnS8O..."],
-                        }
-                    }
-                }
-
-                status.write("Fetching stream...")
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([url])
-
-                if os.path.exists(temp_file):
-                    with open(temp_file, "rb") as f:
-                        st.session_state.video_bytes = f.read()
-                    st.session_state.video_ready = True
-                    status.update(label="Media unlocked!", state="complete")
-                    st.toast("Ready to download.", icon="✅")
-                else:
-                    status.update(label="File not found.", state="error")
-            except Exception as e:
-                status.update(label="Unlock failed", state="error")
-                st.error(f"Error: {str(e)}")
 
 st.markdown(
     """
