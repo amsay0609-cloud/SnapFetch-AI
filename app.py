@@ -141,7 +141,8 @@ if fetch_clicked:
 
                 status.write("Configuring AI Fetcher...")
                 ydl_opts = {
-                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                    # This new line tells it: "Get the best MP4 available, or the next best thing"
+                    "format": "best[ext=mp4]/best", 
                     "merge_output_format": "mp4",
                     "outtmpl": temp_file,
                     "quiet": True,
@@ -152,11 +153,9 @@ if fetch_clicked:
                     "extractor_args": {
                         "youtube": {
                             "player_client": ["ios", "mweb"],
-                            "skip": ["dash", "hls"],
                         }
                     }
                 }
-
                 status.write("Bypassing security protocols...")
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url])
