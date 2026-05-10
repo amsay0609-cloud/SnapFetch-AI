@@ -140,8 +140,8 @@ if fetch_clicked:
                     os.remove(temp_file)
 
                 status.write("Configuring AI Fetcher...")
-                ydl_opts = {
-                    # This new line tells it: "Get the best MP4 available, or the next best thing"
+               ydl_opts = {
+                    # This tells YouTube: "Give me the best MP4 you have ready to go"
                     "format": "best[ext=mp4]/best", 
                     "merge_output_format": "mp4",
                     "outtmpl": temp_file,
