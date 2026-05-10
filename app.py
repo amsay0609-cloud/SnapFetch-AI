@@ -141,20 +141,17 @@ if fetch_clicked:
 
                 status.write("Configuring AI Fetcher...")
                 ydl_opts = {
-                    # This tells it: Get the best video and audio and force them into mp4
-                    "format": "bestvideo+bestaudio/best",
-                    "merge_output_format": "mp4",
+                    # This is the "Universal" format string - it grabs the best video/audio 
+                    # regardless of extension and forces the server to handle it.
+                    "format": "b", 
                     "outtmpl": temp_file,
                     "quiet": True,
                     "no_warnings": True,
                     "cookiefile": "cookies.txt",
                     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                     "referer": "https://www.youtube.com/",
-                    "extractor_args": {
-                        "youtube": {
-                            "player_client": ["web", "mweb", "ios"],
-                        }
-                    }
+                    "nocheckcertificate": True,
+                }
                 }
 
                 status.write("Bypassing security protocols...")
