@@ -140,9 +140,8 @@ if fetch_clicked:
                     os.remove(temp_file)
 
                 status.write("Configuring AI Fetcher...")
-               ydl_opts = {
-                    # This tells YouTube: "Give me the best MP4 you have ready to go"
-                    "format": "best[ext=mp4]/best", 
+                ydl_opts = {
+                    "format": "best[ext=mp4]/best",
                     "merge_output_format": "mp4",
                     "outtmpl": temp_file,
                     "quiet": True,
@@ -156,6 +155,7 @@ if fetch_clicked:
                         }
                     }
                 }
+
                 status.write("Bypassing security protocols...")
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url])
