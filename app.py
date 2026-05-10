@@ -141,8 +141,8 @@ if fetch_clicked:
 
                 status.write("Configuring AI Fetcher...")
                 ydl_opts = {
-                    # This tells the engine to try merging high-quality or falling back to best single file
-                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                    # This tells it: Get the best video and audio and force them into mp4
+                    "format": "bestvideo+bestaudio/best",
                     "merge_output_format": "mp4",
                     "outtmpl": temp_file,
                     "quiet": True,
@@ -152,7 +152,7 @@ if fetch_clicked:
                     "referer": "https://www.youtube.com/",
                     "extractor_args": {
                         "youtube": {
-                            "player_client": ["ios", "web", "mweb"],
+                            "player_client": ["web", "mweb", "ios"],
                         }
                     }
                 }
