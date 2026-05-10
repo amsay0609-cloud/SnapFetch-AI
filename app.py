@@ -136,6 +136,50 @@ if fetch_clicked:
 
         with st.status("Unlocking media...", expanded=True) as status:
             try:
+                # Cleanup old files
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+
+                status.write("Configuring AI Fetcher...")
+                ydl_opts = {
+                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                    "merge_output_format": "mp4",
+                    "outtmpl": temp_file,
+                    "quiet": True,
+                    "no_warnings": True,
+                    "cookiefile": "cookies.txt",
+                    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+                    "referer": "https://www.youtube.com/",
+                    "extractor_args": {
+                        "youtube": {
+                            "player_client": ["mweb"],
+                        }
+                    }
+                }
+
+                status.write("Bypassing security protocols...")
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([url])
+
+                if os.path.exists(temp_file):
+                    status.write("Finalizing high-speed transfer...")
+                    with open(temp_file, "rb") as f:
+                        st.session_state.video_bytes = f.read()
+                    st.session_state.video_ready = True
+                    status.update(label="Media Unlocked Successfully!", state="complete")
+                    st.toast("Tap the green button to save.", icon="✅")
+                else:
+                    status.update(label="Media not found.", state="error")
+            except Exception as e:
+                status.update(label="Unlock Failed", state="error")
+                st.error(f"Reason: {str(e)}")
+    else:
+        temp_file = "downloaded_content.mp4"
+        st.session_state.video_ready = False
+        st.session_state.video_bytes = b""
+
+        with st.status("Unlocking media...", expanded=True) as status:
+            try:
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
 
