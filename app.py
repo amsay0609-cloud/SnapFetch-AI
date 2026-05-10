@@ -140,7 +140,7 @@ if fetch_clicked:
                     os.remove(temp_file)
 
                 status.write("Configuring AI Fetcher...")
-                ydl_opts = {
+               ydl_opts = {
                     "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
                     "merge_output_format": "mp4",
                     "outtmpl": temp_file,
@@ -152,7 +152,8 @@ if fetch_clicked:
                     "extractor_args": {
                         "youtube": {
                             "player_client": ["mweb"],
-                            "po_token": ["web+MnS8O..."],
+                            # We leave po_token out so the bgutil provider 
+                            # can automatically find and inject a working one.
                         }
                     }
                 }
