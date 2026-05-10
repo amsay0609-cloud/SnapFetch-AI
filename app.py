@@ -140,9 +140,8 @@ if fetch_clicked:
                     os.remove(temp_file)
 
                 status.write("Configuring AI Fetcher...")
+                # The "b" format ensures we grab a single playable file without needing to merge
                 ydl_opts = {
-                    # This is the "Universal" format string - it grabs the best video/audio 
-                    # regardless of extension and forces the server to handle it.
                     "format": "b", 
                     "outtmpl": temp_file,
                     "quiet": True,
@@ -151,7 +150,6 @@ if fetch_clicked:
                     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                     "referer": "https://www.youtube.com/",
                     "nocheckcertificate": True,
-                }
                 }
 
                 status.write("Bypassing security protocols...")
