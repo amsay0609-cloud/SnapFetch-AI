@@ -74,43 +74,19 @@ st.markdown(
             border-radius: 14px;
             min-height: 48px;
         }
-        .stTextInput > div > div > input:focus {
-            border: 1px solid rgba(99, 102, 241, 0.95);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
-        }
-        div.stButton, div.stDownloadButton {
-            width: 100%;
-        }
-        div.stButton > button,
-        div.stDownloadButton > button {
-            width: 100%;
-            border-radius: 14px;
-            border: 1px solid rgba(148, 163, 184, 0.16);
-            font-weight: 600;
-            padding: 0.78rem 0.95rem;
-            color: #ffffff;
-            transition: all 0.2s ease-in-out;
-        }
         div.stButton > button {
             background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 100%);
-            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.32);
-        }
-        div.stButton > button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 26px rgba(99, 102, 241, 0.38);
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            padding: 0.78rem;
         }
         div.stDownloadButton > button {
             background: linear-gradient(120deg, #10b981 0%, #0ea5e9 100%);
-            box-shadow: 0 0 0 rgba(16, 185, 129, 0.15), 0 10px 26px rgba(14, 165, 233, 0.26);
-        }
-        div.stDownloadButton > button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 18px rgba(16, 185, 129, 0.3), 0 12px 28px rgba(14, 165, 233, 0.33);
-        }
-        div.stDownloadButton > button:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-            box-shadow: none;
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            padding: 0.78rem;
         }
         .how-to-card {
             background: rgba(15, 23, 42, 0.7);
@@ -118,38 +94,6 @@ st.markdown(
             border-radius: 16px;
             padding: 1rem;
             margin-top: 0.85rem;
-        }
-        .how-to-title {
-            font-size: 1.06rem;
-            font-weight: 650;
-            color: #f8fafc;
-            margin-bottom: 0.52rem;
-        }
-        .how-to-item {
-            color: #cbd5e1;
-            margin: 0.3rem 0;
-        }
-        @media (max-width: 640px) {
-            .main .block-container {
-                max-width: 100%;
-                padding-left: 0.95rem;
-                padding-right: 0.95rem;
-                padding-top: 1.25rem;
-            }
-            .glass-card, .how-to-card {
-                border-radius: 16px;
-                padding: 0.95rem;
-            }
-            .header-title {
-                font-size: 1.7rem;
-            }
-            .header-icon {
-                font-size: 2.8rem;
-            }
-            div.stButton > button,
-            div.stDownloadButton > button {
-                min-height: 48px;
-            }
         }
     </style>
     """,
@@ -169,11 +113,7 @@ st.markdown(
 
 with st.container():
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-    # 2. Input
     url = st.text_input("Media URL", placeholder="Paste your link to unlock media...")
-
-    # 3. Processing
     fetch_clicked = st.button("Unlock Media", use_container_width=True)
 
     st.download_button(
@@ -184,7 +124,6 @@ with st.container():
         disabled=not st.session_state.video_ready,
         use_container_width=True,
     )
-
     st.markdown('</div>', unsafe_allow_html=True)
 
 if fetch_clicked:
@@ -195,10 +134,8 @@ if fetch_clicked:
         st.session_state.video_ready = False
         st.session_state.video_bytes = b""
 
-      with st.status("Unlocking media...", expanded=True) as status:
+        with st.status("Unlocking media...", expanded=True) as status:
             try:
-                status.write("Validating your link")
-
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
 
@@ -214,67 +151,34 @@ if fetch_clicked:
                     "extractor_args": {
                         "youtube": {
                             "player_client": ["mweb"],
+                            "po_token": ["web+MnS8O..."],
                         }
                     }
                 }
 
-                status.write("Fetching highest quality stream")
+                status.write("Fetching stream...")
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url])
 
                 if os.path.exists(temp_file):
-                    with open(temp_file, "rb") as video_file:
-                        st.session_state.video_bytes = video_file.read()
+                    with open(temp_file, "rb") as f:
+                        st.session_state.video_bytes = f.read()
                     st.session_state.video_ready = True
-                    status.update(label="Media unlocked successfully", state="complete")
+                    status.update(label="Media unlocked!", state="complete")
                     st.toast("Ready to download.", icon="✅")
                 else:
-                    status.update(label="Could not process this media", state="error")
-                    st.toast("Processing failed. Try another link.", icon="❌")
-
+                    status.update(label="File not found.", state="error")
             except Exception as e:
                 status.update(label="Unlock failed", state="error")
-                st.toast(f"Fetch failed: {str(e)}", icon="❌")
-ydl_opts = {
-    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-    "merge_output_format": "mp4",
-    "outtmpl": temp_file,
-    "quiet": True,
-    "no_warnings": True,
-    "cookiefile": "cookies.txt",
-    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
-    "referer": "https://www.youtube.com/",
-    "extractor_args": {
-        "youtube": {
-            "player_client": ["mweb"],
-            "po_token": ["web+MnS8O..."], # This triggers the bgutil provider
-        }
-    }
-}
-                status.write("Fetching highest quality stream")
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([url])
-
-                if os.path.exists(temp_file):
-                    with open(temp_file, "rb") as video_file:
-                        st.session_state.video_bytes = video_file.read()
-                    st.session_state.video_ready = True
-                    status.update(label="Media unlocked successfully", state="complete")
-                    st.toast("Ready to download.", icon="✅")
-                else:
-                    status.update(label="Could not process this media", state="error")
-                    st.toast("Processing failed. Try another link.", icon="❌")
-            except Exception:
-                status.update(label="Unlock failed", state="error")
-                st.toast("Fetch failed. Please try again.", icon="❌")
+                st.error(f"Error: {str(e)}")
 
 st.markdown(
     """
     <div class="how-to-card">
-        <div class="how-to-title">How to use</div>
-        <p class="how-to-item">🔗 Paste a media URL in the input field.</p>
-        <p class="how-to-item">🟣 Tap <strong>Unlock Media</strong> to fetch the best version.</p>
-        <p class="how-to-item">🌊 Tap <strong>Download MP4</strong> once it becomes active.</p>
+        <p style="color:white; font-weight:bold;">How to use</p>
+        <p style="color:#cbd5e1;">🔗 Paste a media URL.</p>
+        <p style="color:#cbd5e1;">🟣 Tap Unlock Media.</p>
+        <p style="color:#cbd5e1;">🌊 Tap Download MP4.</p>
     </div>
     """,
     unsafe_allow_html=True,
