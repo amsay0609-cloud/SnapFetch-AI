@@ -141,19 +141,14 @@ if fetch_clicked:
 
                 status.write("Configuring AI Fetcher...")
                 ydl_opts = {
-                    "format": "best[ext=mp4]/best",
-                    "merge_output_format": "mp4",
+                    # BROAD FORMAT SELECTION: Grab any working video stream
+                    "format": "best", 
                     "outtmpl": temp_file,
                     "quiet": True,
                     "no_warnings": True,
                     "cookiefile": "cookies.txt",
-                    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+                    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                     "referer": "https://www.youtube.com/",
-                    "extractor_args": {
-                        "youtube": {
-                            "player_client": ["ios", "mweb"],
-                        }
-                    }
                 }
 
                 status.write("Bypassing security protocols...")
