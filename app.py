@@ -195,12 +195,46 @@ if fetch_clicked:
         st.session_state.video_ready = False
         st.session_state.video_bytes = b""
 
-        with st.status("Unlocking media...", expanded=True) as status:
+      with st.status("Unlocking media...", expanded=True) as status:
             try:
                 status.write("Validating your link")
 
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
+
+                ydl_opts = {
+                    "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                    "merge_output_format": "mp4",
+                    "outtmpl": temp_file,
+                    "quiet": True,
+                    "no_warnings": True,
+                    "cookiefile": "cookies.txt",
+                    "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+                    "referer": "https://www.youtube.com/",
+                    "extractor_args": {
+                        "youtube": {
+                            "player_client": ["mweb"],
+                        }
+                    }
+                }
+
+                status.write("Fetching highest quality stream")
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([url])
+
+                if os.path.exists(temp_file):
+                    with open(temp_file, "rb") as video_file:
+                        st.session_state.video_bytes = video_file.read()
+                    st.session_state.video_ready = True
+                    status.update(label="Media unlocked successfully", state="complete")
+                    st.toast("Ready to download.", icon="✅")
+                else:
+                    status.update(label="Could not process this media", state="error")
+                    st.toast("Processing failed. Try another link.", icon="❌")
+
+            except Exception as e:
+                status.update(label="Unlock failed", state="error")
+                st.toast(f"Fetch failed: {str(e)}", icon="❌")
 ydl_opts = {
     "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
     "merge_output_format": "mp4",
