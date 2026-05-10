@@ -151,7 +151,8 @@ if fetch_clicked:
                     "referer": "https://www.youtube.com/",
                     "extractor_args": {
                         "youtube": {
-                            "player_client": ["mweb"],
+                            "player_client": ["ios", "mweb"],
+                            "skip": ["dash", "hls"],
                         }
                     }
                 }
